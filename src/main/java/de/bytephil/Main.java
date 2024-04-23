@@ -8,11 +8,15 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import java.net.http.WebSocket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Main {
+
+    private Javalin app;
+
     public static void main(String[] args) {
         System.out.println("Hello world!");
 
@@ -55,7 +59,7 @@ public class Main {
             });
             ws.onMessage(ctx -> {
                 System.out.println("Received: " + ctx.message());
-                eingehendeBestellungen.add("{\"cocktail\": \""+ ctx.message().split(";")[0].replace("ORDER: ", "") + "\", \"besteller\": \"" + ctx.message().split(";")[1].replace("FROM: ", "") + "\"}"); // Speichere die eingehende Bestellung
+                eingehendeBestellungen.add("{\"cocktail\": \"" + ctx.message().split(";")[0].replace("ORDER: ", "") + "\", \"besteller\": \"" + ctx.message().split(";")[1].replace("FROM: ", "") + "\"}"); // Speichere die eingehende Bestellung
             });
         });
 
@@ -68,8 +72,14 @@ public class Main {
                 }
             });
             ws.onMessage(ctx -> {
-                System.out.println("Received: " + ctx.message());
+                if (ctx.message().contains("UPDATE")) {
+                    for (String bestellung : eingehendeBestellungen) {
+                        ctx.send(bestellung);
+                    }
+                }
             });
         });
     }
+
+
 }

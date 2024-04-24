@@ -81,6 +81,9 @@ public class Main {
                         ctx.send(bestellung);
                     }
                 }
+                if (ctx.message().contains("CLEAR")) {
+                    eingehendeBestellungen.clear();
+                }
                 if (ctx.message().contains("cocktail")) {
                     eingehendeBestellungen.remove(ctx.message()); // Hinzufügen des "fertig"-Elements
                     if (ctx.message().contains("true")) {

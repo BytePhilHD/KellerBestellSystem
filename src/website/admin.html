@@ -42,6 +42,7 @@
 <body>
 <h1>Bestellungen</h1>
 <ul id="bestellungen"></ul>
+<button id="clearButton" style="float: right;">Alle löschen (!)</button>
 
 <script>
     // Simuliere Websocket-Nachrichten (ersetze dies mit echtem Code)
@@ -71,7 +72,8 @@
         // Überprüfe, ob die Bestellung bereits in der Liste ist
         const bestehendeBestellung = bestellungen.find(bestellung =>
                 bestellung.cocktail === neueBestellung.cocktail &&
-                bestellung.besteller === neueBestellung.besteller
+                bestellung.besteller === neueBestellung.besteller &&
+                bestellung.fertig === neueBestellung.fertig
             )
         ;
         // Wenn die Bestellung nicht bereits in der Liste ist, füge sie hinzu
@@ -92,13 +94,15 @@
             bestellungenListe.appendChild(li);
         } else if (bestehendeBestellung.fertig !== neueBestellung.fertig) {
             // Wenn die Bestellung bereits in der Liste ist, aber der Status geändert wurde
-            console.log("Status geändert" + neueBestellung.fertig);
             bestehendeBestellung.fertig = neueBestellung.fertig;
             const li = Array.from(bestellungenListe.children).find(child =>
                 child.textContent.includes(`${neueBestellung.cocktail} - ${neueBestellung.besteller}`)
             )
         }
     };
+    document.getElementById('clearButton').addEventListener('click', () => {
+        ws.send('CLEAR');
+    });
     setInterval(() => {
         ws.send("UPDATE");
     }, 2000); // 2000 Millisekunden = 2 Sekunden

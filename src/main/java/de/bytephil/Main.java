@@ -10,7 +10,9 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import java.net.http.WebSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Main {
@@ -44,6 +46,7 @@ public class Main {
 
         server.setConnectors(new Connector[]{sslConnector});
 
+
         List<String> eingehendeBestellungen = new ArrayList<>();
 
         // Erstelle eine Javalin-App mit der Server-Instanz
@@ -54,12 +57,13 @@ public class Main {
         // Erstelle einen WebSocket-Handler für die Route "/socket"
         app.ws("/socket", ws -> {
             ws.onConnect(session -> {
-                System.out.println("Connected");
                 session.send("Hello!");
             });
             ws.onMessage(ctx -> {
                 System.out.println("Received: " + ctx.message());
-                eingehendeBestellungen.add("{\"cocktail\": \"" + ctx.message().split(";")[0].replace("ORDER: ", "") + "\", \"besteller\": \"" + ctx.message().split(";")[1].replace("FROM: ", "") + "\"}"); // Speichere die eingehende Bestellung
+                eingehendeBestellungen.add("{\"cocktail\":\"" + ctx.message().split(";")[0].replace("ORDER: ", "") + "\"," +
+                        "\"besteller\":\"" + ctx.message().split(";")[1].replace("FROM: ", "") + "\"," +
+                        "\"fertig\":false}"); // Hinzufügen des "fertig"-Elements
             });
         });
 
@@ -77,9 +81,15 @@ public class Main {
                         ctx.send(bestellung);
                     }
                 }
+                if (ctx.message().contains("cocktail")) {
+                    eingehendeBestellungen.remove(ctx.message()); // Hinzufügen des "fertig"-Elements
+                    if (ctx.message().contains("true")) {
+                        eingehendeBestellungen.add(ctx.message().replace("true", "false"));
+                    } else if (ctx.message().contains("false")) {
+                        eingehendeBestellungen.add(ctx.message().replace("false", "true"));
+                    }
+                }
             });
         });
     }
-
-
 }

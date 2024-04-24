@@ -11,16 +11,19 @@
             color: #ffffff;
             font-family: Arial, sans-serif;
         }
+
         /* Responsive Styles */
         @media (max-width: 600px) {
             /* Stil für Handys */
             /* Füge hier deine spezifischen Styles für Handys hinzu */
         }
+
         /* Liste Styles */
         ul {
             list-style: none;
             padding: 0;
         }
+
         li {
             display: flex;
             justify-content: space-between;
@@ -29,6 +32,7 @@
             border-bottom: 1px solid #444;
             cursor: pointer; /* Hinzugefügt: Zeige Handcursor beim Überfahren */
         }
+
         .completed {
             color: #888;
             text-decoration: line-through;
@@ -36,52 +40,68 @@
     </style>
 </head>
 <body>
-    <h1>Bestellungen</h1>
-    <ul id="bestellungen"></ul>
+<h1>Bestellungen</h1>
+<ul id="bestellungen"></ul>
 
-    <script>
-        // Simuliere Websocket-Nachrichten (ersetze dies mit echtem Code)
-        const bestellungen = [
-            { cocktail: "Mojito", besteller: "Test", fertig: true },
-            // Weitere Bestellungen hier hinzufügen
-        ];
+<script>
+    // Simuliere Websocket-Nachrichten (ersetze dies mit echtem Code)
+    const bestellungen = [
+        {cocktail: "Mojito", besteller: "Test", fertig: true},
+        // Weitere Bestellungen hier hinzufügen
+    ];
 
-        // Zeige Bestellungen in der Liste an
-        const bestellungenListe = document.getElementById("bestellungen");
-        bestellungen.forEach((bestellung, index) => {
+    // Zeige Bestellungen in der Liste an
+    const bestellungenListe = document.getElementById("bestellungen");
+    bestellungen.forEach((bestellung, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${bestellung.cocktail} - ${bestellung.besteller}`;
+
+        li.addEventListener("click", () => {
+            // Klickevent: Toggle fertig/ungefertigt
+            bestellungen[index].fertig = !bestellungen[index].fertig;
+            li.classList.toggle("completed");
+        });
+        bestellungenListe.appendChild(li);
+    });
+
+    // Empfangsfunktion für Websocket-Nachrichten
+    const ws = new WebSocket("wss://" + location.hostname + ":2083/send");
+    ws.onmessage = (messageEvent) => {
+        const neueBestellung = JSON.parse(messageEvent.data);
+        // Überprüfe, ob die Bestellung bereits in der Liste ist
+        const bestehendeBestellung = bestellungen.find(bestellung =>
+                bestellung.cocktail === neueBestellung.cocktail &&
+                bestellung.besteller === neueBestellung.besteller
+            )
+        ;
+        // Wenn die Bestellung nicht bereits in der Liste ist, füge sie hinzu
+        if (!bestehendeBestellung) {
+            bestellungen.push(neueBestellung);
             const li = document.createElement("li");
-            li.textContent = `${bestellung.cocktail} - ${bestellung.besteller}`;
-            if (bestellung.fertig) {
+            li.textContent = `${neueBestellung.cocktail} - ${neueBestellung.besteller}`;
+            if (neueBestellung.fertig) {
                 li.classList.add("completed");
             }
+
             li.addEventListener("click", () => {
                 // Klickevent: Toggle fertig/ungefertigt
-                bestellungen[index].fertig = !bestellungen[index].fertig;
+                ws.send(JSON.stringify(neueBestellung));
+                neueBestellung.fertig = !neueBestellung.fertig;
                 li.classList.toggle("completed");
             });
             bestellungenListe.appendChild(li);
-        });
-
-        // Empfangsfunktion für Websocket-Nachrichten
-        const ws = new WebSocket("wss://" + location.hostname + ":2083/send");
-        ws.onmessage = (messageEvent) => {
-            const neueBestellung = JSON.parse(messageEvent.data);
-            // Überprüfe, ob die Bestellung bereits in der Liste ist
-            const bestehendeBestellung = bestellungen.find(bestellung =>
-                bestellung.cocktail === neueBestellung.cocktail &&
-                bestellung.besteller === neueBestellung.besteller
-            );
-            // Wenn die Bestellung nicht bereits in der Liste ist, füge sie hinzu
-            if (!bestehendeBestellung) {
-                bestellungen.push(neueBestellung);
-                const li = document.createElement("li");
-                li.textContent = `${neueBestellung.cocktail} - ${neueBestellung.besteller}`;
-                bestellungenListe.appendChild(li);
-            }
-        };
-        setInterval(() => {
-            ws.send("UPDATE");
-        }, 2000); // 2000 Millisekunden = 2 Sekunden
-    </script>
+        } else if (bestehendeBestellung.fertig !== neueBestellung.fertig) {
+            // Wenn die Bestellung bereits in der Liste ist, aber der Status geändert wurde
+            console.log("Status geändert" + neueBestellung.fertig);
+            bestehendeBestellung.fertig = neueBestellung.fertig;
+            const li = Array.from(bestellungenListe.children).find(child =>
+                child.textContent.includes(`${neueBestellung.cocktail} - ${neueBestellung.besteller}`)
+            )
+        }
+    };
+    setInterval(() => {
+        ws.send("UPDATE");
+    }, 2000); // 2000 Millisekunden = 2 Sekunden
+</script>
 </body>
 </html>

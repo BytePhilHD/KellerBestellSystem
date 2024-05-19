@@ -44,7 +44,8 @@
 <ul id="bestellungen"></ul>
 <button id="clearButton" style="float: right;">Alle löschen (!)</button>
 
-<h2>Cocktails</h2>
+<h2>Cocktail Verfügbarkeit</h2>
+<h5>Anzeige der aktuell bestellbaren Cocktails (Ausgewählt = Verfügbar)</h5>
 <ul>
     <li><input type="checkbox" checked> Blue-Lagoon</li>
     <li><input type="checkbox" checked> Caipirinha</li>
@@ -56,12 +57,9 @@
     <li><input type="checkbox" checked> Cosmopolitan</li>
     <li><input type="checkbox" checked> Blue-Atoll</li>
     <button id="drinkslistButton" style="float: right;">Sende Aktualisierung</button>
-    <!-- Weitere Cocktails hier einfügen -->
 </ul>
 <script>
-    // Simuliere Websocket-Nachrichten (ersetze dies mit echtem Code)
-    const bestellungen = [
-    ];
+    const bestellungen = [];
 
     // Zeige Bestellungen in der Liste an
     const bestellungenListe = document.getElementById("bestellungen");
@@ -80,6 +78,17 @@
     // Empfangsfunktion für Websocket-Nachrichten
     const ws = new WebSocket("wss://" + location.hostname + ":2083/send");
     ws.onmessage = (messageEvent) => {
+        if (messageEvent.data.includes("DRINKS")) {
+            let data = messageEvent.data.replace("DRINKS", "");
+            const drinkCheckliste = JSON.parse(data);
+
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            checkboxes.forEach((checkbox) => {
+                const label = checkbox.parentElement.textContent.trim();
+                checkbox.checked = drinkCheckliste[label];
+            });
+        } else {
         const neueBestellung = JSON.parse(messageEvent.data);
         // Überprüfe, ob die Bestellung bereits in der Liste ist
         const bestehendeBestellung = bestellungen.find(bestellung =>
@@ -111,7 +120,7 @@
                 child.textContent.includes(`${neueBestellung.cocktail} - ${neueBestellung.besteller}`)
             )
         }
-    };
+    }};
     document.getElementById('clearButton').addEventListener('click', () => {
         ws.send("CLEAR");
         location.reload();
@@ -127,6 +136,7 @@
 
         const jsonResult = JSON.stringify(selectedCheckboxes, null, 2);
         ws.send("DRINKS" + jsonResult);
+        window.alert("Verfügbarkeit der Cocktails aktualisiert!")
     });
     setInterval(() => {
         ws.send("UPDATE");

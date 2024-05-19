@@ -73,6 +73,7 @@ public class Main {
             });
             ws.onMessage(ctx -> {
                 System.out.println("Received: " + ctx.message());
+
                 eingehendeBestellungen.add("{\"cocktail\":\"" + ctx.message().split(";")[0].replace("ORDER: ", "") + "\"," +
                         "\"besteller\":\"" + ctx.message().split(";")[1].replace("FROM: ", "") + "\"," +
                         "\"fertig\":false}"); // Hinzufügen des "fertig"-Elements
@@ -81,10 +82,11 @@ public class Main {
 
         // WebSocket-Handler für die Route "/send"
         app.ws("/send", ws -> {
-            ws.onConnect(session -> {
+            ws.onConnect(ctx -> {
+                ctx.send("DRINKS" + drinksAvailible);
                 // Sende alle gespeicherten Bestellungen nacheinander
                 for (String bestellung : eingehendeBestellungen) {
-                    session.send(bestellung);
+                    ctx.send(bestellung);
                 }
             });
             ws.onMessage(ctx -> {

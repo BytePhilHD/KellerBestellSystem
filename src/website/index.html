@@ -138,7 +138,9 @@
                for (const cocktail in availibleDrinks) {
                    const element = document.getElementById(cocktail);
                    if (element) {
-                       element.onclick = availibleDrinks[cocktail] ? orderDrink.bind(null, this.id) : null;
+                       if (availibleDrinks[cocktail] !== true) {
+                           element.onclick = null;
+                       }
                        element.innerHTML = availibleDrinks[cocktail] ? "Bestellen" : "Nicht verfügbar";
                    }
                }

@@ -6,6 +6,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import java.net.http.WebSocket;
@@ -24,6 +25,17 @@ public class Main {
 
         new Main().startApp();
     }
+
+    /*
+        TODO: Extra Wünsche:
+        - Extra Zitrone
+        - Ohne Eis
+        - Extra Stark
+        - Alkoholfrei
+
+     */
+
+    String drinksAvailible = "";
 
     public void startApp() {
         // Erstelle eine SSL-Kontextfabrik mit dem Keystore-Pfad und den Passwörtern
@@ -57,7 +69,7 @@ public class Main {
         // Erstelle einen WebSocket-Handler für die Route "/socket"
         app.ws("/socket", ws -> {
             ws.onConnect(session -> {
-                session.send("Hello!");
+                session.send(drinksAvailible);
             });
             ws.onMessage(ctx -> {
                 System.out.println("Received: " + ctx.message());
@@ -83,6 +95,9 @@ public class Main {
                 }
                 if (ctx.message().contains("CLEAR")) {
                     eingehendeBestellungen.clear();
+                }
+                if (ctx.message().contains("DRINKS")) {
+                    drinksAvailible = ctx.message().replace("DRINKS", "");
                 }
                 if (ctx.message().contains("cocktail")) {
                     eingehendeBestellungen.remove(ctx.message()); // Hinzufügen des "fertig"-Elements

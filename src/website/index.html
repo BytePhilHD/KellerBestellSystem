@@ -127,11 +127,22 @@
     var bestellungen = 0;
     
     function setupWebSocket() {
-        ws = new WebSocket("wss://" + location.hostname + ":2083/socket");
-     
+         ws = new WebSocket("wss://" + location.hostname + ":2083/socket");
+
 
         ws.onmessage = messageEvent => {
-            console.log(messageEvent.data);
+           const data = messageEvent.data;
+           if (data != null && data !== "") {
+               const availibleDrinks = JSON.parse(data);
+               console.log(availibleDrinks);
+               for (const cocktail in availibleDrinks) {
+                   const element = document.getElementById(cocktail);
+                   if (element) {
+                       element.onclick = availibleDrinks[cocktail] ? orderDrink.bind(null, this.id) : null;
+                       element.innerHTML = availibleDrinks[cocktail] ? "Bestellen" : "Nicht verfügbar";
+                   }
+               }
+           }
         }
         ws.onclose = closeEvent => {
             setupWebSocket();

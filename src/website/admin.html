@@ -47,8 +47,6 @@
 <script>
     // Simuliere Websocket-Nachrichten (ersetze dies mit echtem Code)
     const bestellungen = [
-        {cocktail: "Mojito", besteller: "Test", fertig: true},
-        // Weitere Bestellungen hier hinzufügen
     ];
 
     // Zeige Bestellungen in der Liste an
@@ -101,7 +99,8 @@
         }
     };
     document.getElementById('clearButton').addEventListener('click', () => {
-        ws.send('CLEAR');
+        ws.send("CLEAR");
+        location.reload();
     });
     setInterval(() => {
         ws.send("UPDATE");

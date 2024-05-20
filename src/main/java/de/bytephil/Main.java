@@ -85,8 +85,10 @@ public class Main {
             ws.onConnect(ctx -> {
                 ctx.send("DRINKS" + drinksAvailible);
                 // Sende alle gespeicherten Bestellungen nacheinander
-                for (String bestellung : eingehendeBestellungen) {
-                    ctx.send(bestellung);
+                if (!eingehendeBestellungen.isEmpty()) {
+                    for (String bestellung : eingehendeBestellungen) {
+                        ctx.send(bestellung);
+                    }
                 }
             });
             ws.onMessage(ctx -> {

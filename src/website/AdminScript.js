@@ -33,11 +33,11 @@ ws.onmessage = (messageEvent) => {
         const neueBestellung = JSON.parse(messageEvent.data);
         // Überprüfe, ob die Bestellung bereits in der Liste ist
         const bestehendeBestellung = bestellungen.find(bestellung =>
-                bestellung.cocktail === neueBestellung.cocktail &&
-                bestellung.besteller === neueBestellung.besteller &&
-                bestellung.fertig === neueBestellung.fertig
-            )
-        ;
+            bestellung.cocktail === neueBestellung.cocktail &&
+            bestellung.besteller === neueBestellung.besteller &&
+            bestellung.fertig === neueBestellung.fertig
+        )
+            ;
         // Wenn die Bestellung nicht bereits in der Liste ist, füge sie hinzu
         if (!bestehendeBestellung) {
             bestellungen.push(neueBestellung);
@@ -61,7 +61,8 @@ ws.onmessage = (messageEvent) => {
                 child.textContent.includes(`${neueBestellung.cocktail} - ${neueBestellung.besteller}`)
             )
         }
-    }};
+    }
+};
 document.getElementById('clearButton').addEventListener('click', () => {
     ws.send("CLEAR");
     location.reload();

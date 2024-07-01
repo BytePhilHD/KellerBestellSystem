@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +31,8 @@
             align-items: center;
             padding: 10px;
             border-bottom: 1px solid #444;
-            cursor: pointer; /* Hinzugefügt: Zeige Handcursor beim Überfahren */
+            cursor: pointer;
+            /* Hinzugefügt: Zeige Handcursor beim Überfahren */
         }
 
         .completed {
@@ -39,25 +41,27 @@
         }
     </style>
 </head>
-<body>
-<h1>Bestellungen</h1>
-<ul id="bestellungen"></ul>
-<button id="clearButton" style="float: right;">Alle löschen (!)</button>
 
-<h2>Cocktail Verfügbarkeit</h2>
-<h5>Anzeige der aktuell bestellbaren Cocktails (Ausgewählt = Verfügbar)</h5>
-<ul>
-    <li><input type="checkbox" checked> Blue-Lagoon</li>
-    <li><input type="checkbox" checked> Caipirinha</li>
-    <li><input type="checkbox" checked> Cuba-Libre</li>
-    <li><input type="checkbox" checked> Tequila-Sunrise</li>
-    <li><input type="checkbox" checked> Long-Island</li>
-    <li><input type="checkbox" checked> Gin-Sour</li>
-    <li><input type="checkbox" checked> Casablanca</li>
-    <li><input type="checkbox" checked> Cosmopolitan</li>
-    <li><input type="checkbox" checked> Blue-Atoll</li>
-    <button id="drinkslistButton" style="float: right;">Sende Aktualisierung</button>
-</ul>
-<script src="assets/AdminScript.js"></script>
+<body>
+    <h1>Bestellungen</h1>
+    <ul id="bestellungen"></ul>
+    <button id="clearButton" style="float: right;">Alle löschen (!)</button>
+
+    <h2>Cocktail Verfügbarkeit</h2>
+    <h5>Anzeige der aktuell bestellbaren Cocktails (Ausgewählt = Verfügbar)</h5>
+    <ul>
+        <li><input type="checkbox" checked> Blue-Lagoon</li>
+        <li><input type="checkbox" checked> Caipirinha</li>
+        <li><input type="checkbox" checked> Cuba-Libre</li>
+        <li><input type="checkbox" checked> Tequila-Sunrise</li>
+        <li><input type="checkbox" checked> Long-Island</li>
+        <li><input type="checkbox" checked> Gin-Sour</li>
+        <li><input type="checkbox" checked> Casablanca</li>
+        <li><input type="checkbox" checked> Cosmopolitan</li>
+        <li><input type="checkbox" checked> Blue-Atoll</li>
+        <button id="drinkslistButton" style="float: right;">Sende Aktualisierung</button>
+    </ul>
+    <script src="assets/AdminScript.js"></script>
 </body>
+
 </html>

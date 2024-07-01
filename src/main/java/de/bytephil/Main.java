@@ -1,20 +1,19 @@
 package de.bytephil;
 
-import io.javalin.Javalin;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-
-import org.eclipse.jetty.server.*;
-import org.eclipse.jetty.util.ajax.JSON;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import java.net.http.WebSocket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import io.javalin.Javalin;
+
 
 public class Main {
 
